@@ -12,7 +12,7 @@ Python 3.11+ et FFmpeg dans `PATH`.
 
 ```bash
 python -m pip install -r requirements.txt
-python montage_scene8.py --input "Scene_08_Pedri_Bellingham_Premium_1080p(1).mp4" --output "Scene_08_Pedri_Bellingham_V4_Premium_Github_1080p25.mp4"
+python montage_scene8.py --input "Scene_08_Pedri_Bellingham_Premium_1080p(1).mp4" --output "Scene_08_Pedri_Bellingham_V6_Premium_Github_1080p25.mp4"
 ```
 
 Pour 5 secondes de test :
@@ -37,6 +37,6 @@ L'utilisateur peut ajouter les visuels officiels sous licence (trophées, logos,
 
 ## Sources et qualité
 
-Vérifier les droits des photos réutilisées issues du montage source avant toute publication YouTube. Les statistiques apparaissent aux moments de la narration. Aucune statistique n'a été créée sans source officielle. Un portrait de Pedri issu d'un ancien projet utilisateur peut être placé dans `assets/pedri_2021.jpg` pour éviter une image de Bellingham sur la séquence des passes de Pedri. En l'absence de ce visuel facultatif, le moteur affiche un plan neutre de stade.
+Vérifier les droits des photos réutilisées issues du montage source avant toute publication YouTube. Les statistiques apparaissent aux moments de la narration. Aucune statistique n'a été créée sans source officielle. Sur les statistiques de Pedri à l'Euro 2020, une photographie de Pedri sous le maillot de l'Espagne, extraite du montage original, sert d'illustration du joueur et non de photographie de la demi-finale 2021. Le moteur évite désormais la photo du trophée de la Coupe du Roi qui était hors contexte. Aucun visuel supplémentaire n'est requis pour reproduire le rendu.
 
 Les trois sorties visées sont le MP4 final, le rapport JSON d'export et le projet Python modifiable.
