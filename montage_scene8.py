@@ -8,7 +8,7 @@ attribuées et des titres web vérifiés sont reproduits dans une mise en page o
 Exemple : python montage_scene8.py --input "Scene_08_Pedri_Bellingham_Premium_1080p(1).mp4"
 """
 from __future__ import annotations
-import argparse, bisect, json, math, os, shutil, subprocess, sys, wave
+import argparse, base64, bisect, io, json, math, os, shutil, subprocess, sys, wave
 from functools import lru_cache
 from pathlib import Path
 import cv2
@@ -165,14 +165,33 @@ def draw_extra(seg,t,local,base):
     # Barrette du plan s'anime continuellement
     d.rounded_rectangle((76,501,76+int(528*clamp(local/max(.1,seg['end']-seg['start']))),503),radius=1,fill=ac)
 
+@lru_cache(maxsize=1)
+def logo_original():
+    # Logo réel de la chaîne ; fallback encodé texte pour les runners GitHub.
+    path=ROOT/'assets'/'logo_le_foot_au_rapport.png'
+    try:
+        if path.is_file():
+            im=Image.open(path).convert('RGBA')
+        else:
+            b64=ROOT/'assets'/'logo_le_foot_au_rapport.b64'
+            im=Image.open(io.BytesIO(base64.b64decode(b64.read_text()))).convert('RGBA')
+        return im.resize((64,64),Image.Resampling.LANCZOS)
+    except Exception:
+        return None
+
 def draw_hud(frame,t,seg):
     # HUD transparent en coin haut, style retransmission sportive
     d=ImageDraw.Draw(frame)
     ac=color(seg)
-    rounded(d,(30,24,321,73),12,(12,17,30,210),outline=(*ac,140))
-    draw_crest(d,40,32,seg.get('accent') if seg.get('accent') in ['spain','england'] else 'spain')
-    draw_fit(d,(83,32),'LE FOOT AU RAPPORT',19,WHITE,limit=226)
-    draw_fit(d,(84,56),'DÉCRYPTAGE INTERNATIONAL',9,ac,limit=220)
+    rounded(d,(26,18,348,88),13,(12,17,30,218),outline=(*ac,140))
+    brand=logo_original()
+    if brand is not None:
+        frame.alpha_composite(brand,(33,21))
+    else:
+        draw_crest(d,42,34,seg.get('accent') if seg.get('accent') in ['spain','england'] else 'spain')
+    d=ImageDraw.Draw(frame)
+    draw_fit(d,(108,33),'LE FOOT AU RAPPORT',18,WHITE,limit=234)
+    draw_fit(d,(109,58),'DÉCRYPTAGE INTERNATIONAL',10,ac,limit=225)
     rounded(d,(735,26,928,67),12,(12,17,30,204),outline=(*ac,124))
     draw_fit(d,(748,36),'PEDRI  ×  BELLINGHAM',14,WHITE,limit=165)
     # Vignette X: transcription de post authentique, présentation graphique originale
