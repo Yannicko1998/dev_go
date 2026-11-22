@@ -261,22 +261,16 @@ def make_background_sources(input_path:Path):
         'spain_euro2024':at(37.4),
         'stadium_neutral':at(13.3),
         'bellingham_mondial':at(56.2),
+        'pedri_selection_illustration':at(41.0),
     }
     source.release()
-    pedri=ROOT/'assets'/'pedri_2021.jpg'
-    if pedri.is_file():
-        im=cv2.imread(str(pedri),cv2.IMREAD_COLOR)
-        # Recadrage portrait 2021, sans la Coupe du Roi qui n'est PAS l'Euro.
-        if im is not None:
-            # conserver la tête/épaules, sans inscriptions du trophée
-            hh,ww=im.shape[:2]
-            im=im[0:int(hh*.42),int(ww*.29):int(ww*.73)]
-            frames['pedri_portrait_2021']=cv2.resize(im,(W,H))
+    # Photo du joueur sous le maillot espagnol issue du MP4 fourni.
+    # Il s'agit d'une illustration du joueur, pas d'une capture de la demi-finale 2021.
     return frames
 
 def corrected_background(t,original,frames):
     name=None
-    if 7.75<=t<11.78:name='pedri_portrait_2021' if 'pedri_portrait_2021' in frames else 'stadium_neutral'
+    if 7.75<=t<11.78:name='pedri_selection_illustration'
     elif 18.39<=t<22.81:name='bellingham_interview'
     elif 22.81<=t<26.90:name='spain_euro2024'
     elif 35.90<=t<43.70:name='stadium_neutral'
