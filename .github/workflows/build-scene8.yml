@@ -28,12 +28,12 @@ jobs:
           ffprobe -v error -show_format input.mp4
       - name: Monter la scène 8
         run: |
-          python montage_scene8.py --input input.mp4 --output Scene_08_Pedri_Bellingham_V4_Premium_1080p25.mp4
+          python montage_scene8.py --input input.mp4 --output Scene_08_Pedri_Bellingham_V6_Premium_1080p25.mp4
       - name: Conserver le MP4 comme artefact GitHub
         uses: actions/upload-artifact@v4
         with:
           name: scene-08-pedri-bellingham-video
           path: |
-            Scene_08_Pedri_Bellingham_V4_Premium_1080p25.mp4
-            Scene_08_Pedri_Bellingham_V4_Premium_1080p25.rapport.json
+            Scene_08_Pedri_Bellingham_V6_Premium_1080p25.mp4
+            Scene_08_Pedri_Bellingham_V6_Premium_1080p25.rapport.json
           retention-days: 14
