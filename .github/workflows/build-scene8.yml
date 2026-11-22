@@ -1,0 +1,39 @@
+name: Scene 8 premium - render Python
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: 'URL directe vers le MP4 source (accessible par le runner GitHub Actions)'
+        required: true
+        type: string
+jobs:
+  render:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Installer les dépendances
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          python -m pip install -r requirements.txt
+      - name: Télécharger le MP4 fourni par l'auteur
+        env:
+          SOURCE_URL: ${{ inputs.source_url }}
+        run: |
+          curl --fail --location --retry 2 --max-time 300 --output input.mp4 "$SOURCE_URL"
+          ffprobe -v error -show_format input.mp4
+      - name: Monter la scène 8
+        run: |
+          python montage_scene8.py --input input.mp4 --output Scene_08_Pedri_Bellingham_V4_Premium_1080p25.mp4
+      - name: Conserver le MP4 comme artefact GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: scene-08-pedri-bellingham-video
+          path: |
+            Scene_08_Pedri_Bellingham_V4_Premium_1080p25.mp4
+            Scene_08_Pedri_Bellingham_V4_Premium_1080p25.rapport.json
+          retention-days: 14
