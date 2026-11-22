@@ -12,7 +12,7 @@ Python 3.11+ et FFmpeg dans `PATH`.
 
 ```bash
 python -m pip install -r requirements.txt
-python montage_scene8.py --input "Scene_08_Pedri_Bellingham_Premium_1080p(1).mp4" --output "Scene_08_Pedri_Bellingham_V6_Premium_Github_1080p25.mp4"
+python montage_scene8.py --input "Scene_08_Pedri_Bellingham_Premium_1080p(1).mp4" --output "Scene_08_Pedri_Bellingham_V7_Premium_Github_1080p25.mp4"
 ```
 
 Pour 5 secondes de test :
@@ -27,6 +27,8 @@ python montage_scene8.py --input "Scene_08_Pedri_Bellingham_Premium_1080p(1).mp4
 - `scene8_timeline.json` : scènes, statistiques et passages synchronisés d'après une retranscription de la voix.
 - `Scene_08_Voix_Off_Transcription.srt` : transcription française complète avec timecodes.
 - `sources_verifiees.json` : URLs UEFA/FIFA/RFEF/England Football/L'Équipe.
+- `assets/logo_le_foot_au_rapport.png` : véritable logo de la chaîne, fourni par le créateur.
+- `assets/logo_le_foot_au_rapport.b64` : logo encodé en texte pour que le dépôt GitHub fonctionne même sans binaire PNG.
 - `.github/workflows/build-scene8.yml` : workflow de rendu lancé manuellement avec une URL directe d'accès au MP4 source.
 
 ## Informations importantes
