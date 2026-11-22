@@ -24,7 +24,8 @@ python montage_scene8.py --input "Scene_08_Pedri_Bellingham_Premium_1080p(1).mp4
 ## Structure
 
 - `montage_scene8.py` : moteur complet de rendu image par image et mixage original.
-- `scene8_timeline.json` : scènes, statistiques et passages synchronisés d'après une retranscription de la voix (incluse dans le dossier local).
+- `scene8_timeline.json` : scènes, statistiques et passages synchronisés d'après une retranscription de la voix.
+- `Scene_08_Voix_Off_Transcription.srt` : transcription française complète avec timecodes.
 - `sources_verifiees.json` : URLs UEFA/FIFA/RFEF/England Football/L'Équipe.
 - `.github/workflows/build-scene8.yml` : workflow de rendu lancé manuellement avec une URL directe d'accès au MP4 source.
 
@@ -36,4 +37,6 @@ L'utilisateur peut ajouter les visuels officiels sous licence (trophées, logos,
 
 ## Sources et qualité
 
-Vérifier les droits des photos réutilisées issues du montage source avant toute publication YouTube. Les statistiques apparaissent aux moments de la narration. Aucune statistique n'a été créée sans source officielle. Les trois sorties visées sont le MP4 final, le rapport JSON d'export et le projet Python modifiable.
+Vérifier les droits des photos réutilisées issues du montage source avant toute publication YouTube. Les statistiques apparaissent aux moments de la narration. Aucune statistique n'a été créée sans source officielle. Un portrait de Pedri issu d'un ancien projet utilisateur peut être placé dans `assets/pedri_2021.jpg` pour éviter une image de Bellingham sur la séquence des passes de Pedri. En l'absence de ce visuel facultatif, le moteur affiche un plan neutre de stade.
+
+Les trois sorties visées sont le MP4 final, le rapport JSON d'export et le projet Python modifiable.
