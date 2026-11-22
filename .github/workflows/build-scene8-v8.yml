@@ -1,0 +1,33 @@
+name: Scene 8 V8 — Le Foot au Rapport
+on:
+  workflow_dispatch:
+    inputs:
+      source_video_url:
+        description: URL directe HTTP(S) de la vidéo source 1920×1080 (25 fps, piste audio)
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python -m pip install -r v8/requirements.txt
+      - name: Télécharger le MP4 source
+        env:
+          VIDEO_URL: ${{ inputs.source_video_url }}
+        run: |
+          curl --fail --location --retry 3 --output scene8_source.mp4 "$VIDEO_URL"
+          ffprobe -v error -show_entries format=duration:stream=codec_type,width,height -of json scene8_source.mp4
+      - name: Exporter le MP4 final
+        run: |
+          python v8/montage_scene8_v8.py --input scene8_source.mp4 --output Scene_08_Pedri_Bellingham_V8_Premium_1080p25.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Scene-08-Premium-V8-1080p25
+          path: Scene_08_Pedri_Bellingham_V8_Premium_1080p25.mp4
+          retention-days: 30
