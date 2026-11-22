@@ -244,6 +244,55 @@ def probe(fp):
     q=subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration:stream=codec_type,width,height','-of','json',str(fp)])
     return json.loads(q)
 
+def make_background_sources(input_path:Path):
+    """Évite d'illustrer une compétition avec un évènement hors contexte.
+
+    Remplacements issus exclusivement du MP4 d'origine et d'une image du
+    projet source fournie par l'auteur : aucun photomontage de faux match.
+    """
+    source=cv2.VideoCapture(str(input_path))
+    def at(t):
+        source.set(cv2.CAP_PROP_POS_MSEC,t*1000)
+        ok,img=source.read()
+        if not ok:raise RuntimeError('Capture source impossible a '+str(t))
+        return img
+    frames={
+        'bellingham_interview':at(33.2),
+        'spain_euro2024':at(37.4),
+        'stadium_neutral':at(13.3),
+        'bellingham_mondial':at(56.2),
+    }
+    source.release()
+    pedri=ROOT/'assets'/'pedri_2021.jpg'
+    if pedri.is_file():
+        im=cv2.imread(str(pedri),cv2.IMREAD_COLOR)
+        # Recadrage portrait 2021, sans la Coupe du Roi qui n'est PAS l'Euro.
+        if im is not None:
+            # conserver la tête/épaules, sans inscriptions du trophée
+            hh,ww=im.shape[:2]
+            im=im[0:int(hh*.42),int(ww*.29):int(ww*.73)]
+            frames['pedri_portrait_2021']=cv2.resize(im,(W,H))
+    return frames
+
+def corrected_background(t,original,frames):
+    name=None
+    if 7.75<=t<11.78:name='pedri_portrait_2021' if 'pedri_portrait_2021' in frames else 'stadium_neutral'
+    elif 18.39<=t<22.81:name='bellingham_interview'
+    elif 22.81<=t<26.90:name='spain_euro2024'
+    elif 35.90<=t<43.70:name='stadium_neutral'
+    elif 58.21<=t<63.39:name='bellingham_mondial'
+    if not name:return original
+    base=frames[name]
+    # mouvement Ken Burns très léger, stable, sans faux mouvement de match
+    duration=8 if name=='stadium_neutral' else 4.5
+    pct=clamp((t%duration)/duration)
+    zoom=1.016+0.018*pct
+    ww=int(W/zoom);hh=int(H/zoom)
+    x0=int((W-ww)*(.32+.30*pct));y0=int((H-hh)*(.30+.22*pct))
+    x0=max(0,min(W-ww,x0));y0=max(0,min(H-hh,y0))
+    cropped=base[y0:y0+hh,x0:x0+ww]
+    return cv2.resize(cropped,(W,H),interpolation=cv2.INTER_LINEAR)
+
 def render(input_path:Path,output_path:Path,timeline:Path,limit=None):
     global SEG,ENDS,SEG_BY_START
     SEG=json.loads(timeline.read_text(encoding='utf-8'))
@@ -257,6 +306,7 @@ def render(input_path:Path,output_path:Path,timeline:Path,limit=None):
     duration=min(DURATION,limit if limit else DURATION)
     nframes=int(math.ceil(duration*FPS))
     cap=cv2.VideoCapture(str(input_path))
+    replacement_frames=make_background_sources(input_path)
     if not cap.isOpened():raise RuntimeError('Impossible de lire le MP4')
     sourcefps=cap.get(cv2.CAP_PROP_FPS)
     if abs(sourcefps-FPS)>.2:raise RuntimeError(f'Vérifier FPS source : {sourcefps} vs {FPS}')
@@ -273,7 +323,8 @@ def render(input_path:Path,output_path:Path,timeline:Path,limit=None):
             if not ok:break
             idx=min(len(SEG)-1,bisect.bisect_right(ENDS,t))
             seg=SEG[idx]
-            # Images source gardées plein écran; étalonnage discret, vignette douce
+            # Photos cohérentes avec la narration, toutes en plein écran.
+            frame=corrected_background(t,frame,replacement_frames)
             frame=cv2.convertScaleAbs(frame,alpha=1.035,beta=-2)
             graphic,hud=make_overlay(seg,t)
             blend_native(frame,graphic);blend_native(frame,hud)
